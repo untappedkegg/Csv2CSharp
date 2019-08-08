@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Csv2CSharpCli": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\Users\\eggemeyerk\\source\\repos\\NPI_DataCLI\\NPI_DataCLI\\bin\\Debug\\netcoreapp3.0\\download_temp\\npidata_pfile_20190729-20190804.csv"
+    }
+  }
+}
