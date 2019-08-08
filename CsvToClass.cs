@@ -44,16 +44,12 @@ namespace Csv2CSharpCli
 
         public static string GetVariableDeclaration(string[] data, int columnIndex, string columnName, string attribute = null, char delimiter = ',')
         {
-            string[] columnValues = data.Select(line => line.Split(delimiter)[columnIndex].Trim()).Where(s => !string.IsNullOrEmpty(s)).ToArray();
+            string[] columnValues = data.Select(line => line.Split(delimiter)[columnIndex].Trim().Trim('"')).Where(s => !string.IsNullOrEmpty(s)).ToArray();
             string typeAsString;
 
             if (columnValues.Length == 0)
             {
                 typeAsString = "string";
-            }
-            else if (AllDateTimeValues(columnValues))
-            {
-                typeAsString = "DateTime";
             }
             else if (AllIntValues(columnValues))
             {
@@ -62,6 +58,10 @@ namespace Csv2CSharpCli
             else if (AllDoubleValues(columnValues))
             {
                 typeAsString = "double";
+            }
+            else if (AllDateTimeValues(columnValues))
+            {
+                typeAsString = "DateTime";
             }
             else
             {
