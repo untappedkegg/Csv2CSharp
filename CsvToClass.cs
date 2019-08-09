@@ -7,6 +7,10 @@ namespace Csv2CSharpCli
 {
     class CsvToClass
     {
+        private static readonly string[] Bool_Values = { "true", "y", "yes", "on", "false", "n", "no", "off" };
+        private static readonly string[] Bool_True_Values = Bool_Values[..3];
+        private static readonly string[] Bool_False_Values = Bool_Values[4..];
+
         public static string CSharpClassCodeFromCsvFile(string filePath, out string className, char delimiter = ',',
             string classAttribute = "", string propertyAttribute = "")
         {
@@ -15,7 +19,7 @@ namespace Csv2CSharpCli
                 propertyAttribute += "\n\t\t";
             }
 
-            if (!string.IsNullOrWhiteSpace(propertyAttribute))
+            if (!string.IsNullOrWhiteSpace(classAttribute))
             {
                 classAttribute += "\n";
             }
@@ -27,7 +31,7 @@ namespace Csv2CSharpCli
 
             className = Path.GetFileNameWithoutExtension(filePath).Replace('-', '_');
 
-            string code = $"using System;\n\nnamespace Csv2CSharp \n{{\n{classAttribute}\tpublic class {className} \n\t{{ \n";
+            string code = $"using System;\nusing CsvHelper.Configuration.Attributes;\n\nnamespace Csv2CSharp \n{{\n{classAttribute}\tpublic class {className} \n\t{{ \n";
 
             for (int columnIndex = 0; columnIndex < columnNames.Length; columnIndex++)
             {
@@ -45,30 +49,62 @@ namespace Csv2CSharpCli
         public static string GetVariableDeclaration(string[] data, int columnIndex, string columnName, string attribute = null, char delimiter = ',')
         {
             string[] columnValues = data.Select(line => line.Split(delimiter)[columnIndex].Trim().Trim('"')).Where(s => !string.IsNullOrEmpty(s)).ToArray();
-            string typeAsString;
+            SupportedType actualType;
 
             if (columnValues.Length == 0)
             {
-                typeAsString = "string";
+                actualType = SupportedType.STRING;
             }
             else if (AllIntValues(columnValues))
             {
-                typeAsString = "int";
+                actualType = SupportedType.INT;
             }
             else if (AllDoubleValues(columnValues))
             {
-                typeAsString = "double";
+                actualType = SupportedType.DOUBLE;
             }
             else if (AllDateTimeValues(columnValues))
             {
-                typeAsString = "DateTime";
+                actualType = SupportedType.DATETIME;
+            }
+            else if (AllBoolValues(columnValues))
+            {
+                actualType = SupportedType.BOOL;
             }
             else
             {
-                typeAsString = "string";
+                actualType = SupportedType.STRING;
             }
 
-            return $"{attribute}public {typeAsString} {columnName} {{ get; set; }}";
+            return $"{attribute}{GetAdditionalAttributeForType(actualType, columnValues)}public {actualType.Name()} {columnName} {{ get; set; }}";
+        }
+
+        private static string GetAdditionalAttributeForType(SupportedType type, string[] columnValues)
+        {
+            switch (type)
+            {
+                case SupportedType.INT:
+                    break;
+                case SupportedType.DOUBLE:
+                    break;
+                case SupportedType.DATETIME:
+                    break;
+                case SupportedType.BOOL:
+                    var vals = columnValues.Distinct();
+                    var trueVals = vals.Intersect(Bool_True_Values, StringComparer.OrdinalIgnoreCase).Select(s => $"\"{s}\"");
+                    var falseVals = vals.Intersect(Bool_False_Values, StringComparer.OrdinalIgnoreCase).Select(s => $"\"{s}\"");
+
+                    return $"[BooleanTrueValues({string.Join(',', trueVals)})]\n\t\t[BooleanFalseValues({string.Join(',', falseVals)})]\n\t\t";         
+                case SupportedType.STRING:
+                default:
+                    return string.Empty;
+            }
+            return string.Empty;
+        }
+
+        public static bool AllBoolValues(string[] values)
+        {
+            return values.All(val => bool.TryParse(val, out bool b) || Bool_Values.Contains(val.ToLower()));
         }
 
         public static bool AllDoubleValues(string[] values)
@@ -84,8 +120,9 @@ namespace Csv2CSharpCli
         public static bool AllDateTimeValues(string[] values)
         {
             return values.All(val => DateTime.TryParse(val, out DateTime d));
-        }
+        }        
 
         // add other types if you need...
     }
+
 }
