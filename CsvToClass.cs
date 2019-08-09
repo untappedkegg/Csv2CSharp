@@ -37,7 +37,7 @@ namespace Csv2CSharpCli
 
             for (int columnIndex = 0; columnIndex < columnNames.Length; columnIndex++)
             {
-                colNameNoParens = Regex.Replace(columnNames[columnIndex], @"\(.*?\)", string.Empty).Trim();
+                colNameNoParens = Regex.Replace(columnNames[columnIndex], @"\s\(.*?\)", string.Empty);
                 columnName = Regex.Replace(colNameNoParens, @"[\s\.\""-]", string.Empty);
                 if (string.IsNullOrEmpty(columnName))
                     columnName = "Column" + (columnIndex + 1);
