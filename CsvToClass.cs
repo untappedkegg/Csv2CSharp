@@ -31,14 +31,17 @@ namespace Csv2CSharpCli
 
             className = Path.GetFileNameWithoutExtension(filePath).Replace('-', '_');
 
-            string code = $"using System;\nusing CsvHelper.Configuration.Attributes;\n\nnamespace Csv2CSharp \n{{\n{classAttribute}\tpublic class {className} \n\t{{ \n";
+            string code = $"using System;\nusing CsvHelper.Configuration.Attributes;\nusing System.ComponentModel.DataAnnotations.Schema;\n\nnamespace Csv2CSharp \n{{\n{classAttribute}\tpublic class {className} \n\t{{ \n";
+            string colNameNoParens, columnName;
+
 
             for (int columnIndex = 0; columnIndex < columnNames.Length; columnIndex++)
             {
-                var columnName = Regex.Replace(columnNames[columnIndex], @"[\s\.\""\(.*?\)-]", string.Empty);
+                colNameNoParens = Regex.Replace(columnNames[columnIndex], @"\(.*?\)", string.Empty).Trim();
+                columnName = Regex.Replace(colNameNoParens, @"[\s\.\""-]", string.Empty);
                 if (string.IsNullOrEmpty(columnName))
                     columnName = "Column" + (columnIndex + 1);
-                code += $"\n\t\t[Name({columnNames[columnIndex]})]";
+                code += $"\n\t\t[Name({columnNames[columnIndex]})]\n\t\t[Column({Regex.Replace(colNameNoParens, "[\\s]", "_")})]";
                 code += $"\n\t\t{GetVariableDeclaration(data, columnIndex, columnName, propertyAttribute, delimiter)}\n";
             }
 
