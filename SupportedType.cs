@@ -2,23 +2,23 @@
 using System.Linq;
 using System.Reflection;
 
-namespace Csv2CSharpCli
+namespace Csv2SqlCli
 {
     public enum SupportedType
     {
-        [Display(Name = "string")]
+        [Display(Name = "nvarchar")]
         STRING,
 
         [Display(Name = "int")]
         INT,
 
-        [Display(Name = "double")]
+        [Display(Name = "float")]
         DOUBLE,
 
-        [Display(Name = "DateTime")]
+        [Display(Name = "datetime")]
         DATETIME,
 
-        [Display(Name = "bool")]
+        [Display(Name = "bit")]
         BOOL,
 
 

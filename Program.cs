@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Csv2CSharpCli
+namespace Csv2SqlCli
 {
     public static class Program
     {
@@ -18,9 +18,9 @@ namespace Csv2CSharpCli
 
             var infileName = args[0];
 
-            var cSharpClass = CsvToClass.CSharpClassCodeFromCsvFile(infileName, out string outfileName);
+            var cSharpClass = CsvToSql.CSharpClassCodeFromCsvFile(infileName, null, out string outfileName);
             
-            File.WriteAllText($"{outfileName}.cs", cSharpClass);
+            File.WriteAllText($"{outfileName}.sql", cSharpClass);
             return 0;
         }
     }
