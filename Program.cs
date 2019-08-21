@@ -40,7 +40,8 @@ namespace Csv2SqlCli
 
                 File.WriteAllText($"{outfileName}.sql", cSharpClass);
                 return 0;
-            } catch (Exception e)
+            }
+            catch (Exception e)
             {
                 Console.Write(e.ToString());
                 Console.Read();

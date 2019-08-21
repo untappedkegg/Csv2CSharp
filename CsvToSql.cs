@@ -38,7 +38,6 @@ namespace Csv2SqlCli
 
                 typeString = GetVariableDeclaration(data, columnIndex, out isEmpty, delimiter);
                 code += $"{(isEmpty ? "--" : "")}{columnName.Trim('"')} {typeString}{ ((columnIndex == length - 1) ? "" : ",")}\n\t";
-
             }
 
             code += ");\n";
