@@ -10,4 +10,11 @@
     <DefineConstants />
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Update="Config.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+
 </Project>
