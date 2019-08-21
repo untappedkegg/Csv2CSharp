@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ConfigOptions>
+  <schema>dbo</schema>
+  <delimiter>TAB</delimiter>
+  <delimiterExplanation>
+    If you have tab delimited document, please use TAB, for spaces use SPACE, and newline use NEWLINE
+  </delimiterExplanation>
+</ConfigOptions>
