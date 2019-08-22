@@ -15,7 +15,7 @@ namespace Csv2SqlCli
         {
 
             string[] lines = File.ReadAllLines(filePath);
-            string[] columnNames = lines[0].Split(delimiter).Select(str => str.Trim()).ToArray();
+            string[] columnNames = lines[0].Split(delimiter).Select(str => str.Trim().Trim('"')).ToArray();
             int totalDataLines = lines.Length - 1;
             var data = lines[1..];
 
@@ -33,11 +33,11 @@ namespace Csv2SqlCli
 
                 if (string.IsNullOrEmpty(columnName))
                 {
-                    columnName = "Column" + (columnIndex + 1);
+                    columnName = $"Column_{columnIndex + 1}";
                 }
 
                 typeString = GetVariableDeclaration(data, columnIndex, out isEmpty, delimiter);
-                code += $"{(isEmpty ? "--" : "")}{columnName.Trim('"')} {typeString}{ ((columnIndex == length - 1) ? "" : ",")}\n\t";
+                code += $"{(isEmpty ? "--" : "")}{columnName} {typeString}{ ((columnIndex == length - 1) ? "" : ",")}\n\t";
             }
 
             code += ");\n";

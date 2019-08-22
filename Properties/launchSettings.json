@@ -2,7 +2,7 @@
   "profiles": {
     "Csv2CSharpCli": {
       "commandName": "Project",
-      "commandLineArgs": "C:\\Users\\eggemeyerk\\source\\repos\\BLSUnemployement\\BLSUnemployementCLI\\bin\\Debug\\netcoreapp3.0\\download_temp\\AllData.txt"
+      "commandLineArgs": "C:\\Users\\eggemeyerk\\Desktop\\AllData.txt"
     }
   }
 }
