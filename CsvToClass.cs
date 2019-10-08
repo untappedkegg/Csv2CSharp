@@ -45,7 +45,7 @@ namespace Csv2CSharpCli
                 if (string.IsNullOrEmpty(columnName)) {
                     columnName = "Column" + (columnIndex + 1);
                 }
-                var declaration = GetVariableDeclaration(data, columnIndex, columnName, propertyAttribute, delimiter, out bool isEmpty);
+                var declaration = GetVariableDeclaration(data, columnIndex, columnName, propertyAttribute, delimiter, out bool isEmpty, textInfo);
 
                 if (isEmpty)
                 {
@@ -61,7 +61,7 @@ namespace Csv2CSharpCli
             return code;
         }
 
-        public static string GetVariableDeclaration(string[] data, int columnIndex, string columnName, string attribute, char delimiter, out bool isEmpty)
+        public static string GetVariableDeclaration(string[] data, int columnIndex, string columnName, string attribute, char delimiter, out bool isEmpty, TextInfo textInfo)
         {
             var rawValues = data.Select(line => line.Split(delimiter)[columnIndex].Trim().Trim('"'));
             var hasNulls = rawValues?.Any(v => string.IsNullOrEmpty(v)) ?? false;
@@ -102,8 +102,10 @@ namespace Csv2CSharpCli
                 actualType = SupportedType.STRING;
             }
 
-            return isEmpty ? $"{(string.IsNullOrWhiteSpace(attribute) ? "" : "//" + attribute)}{additionalAttributes}//public {actualType.Name()}{(hasNulls ? "?" : "")} {columnName}{(hasNulls ? "?" : "")} {{ get; set; }}" :
-                              $"{attribute}{additionalAttributes}public {actualType.Name()}{(hasNulls ? "?" : "")} {columnName} {{ get; set; }}";
+            var CamalCaseName = textInfo.ToTitleCase(columnName.Replace(" ", " ").ToLowerInvariant()).Replace("_", "");
+
+            return isEmpty ? $"{(string.IsNullOrWhiteSpace(attribute) ? "" : "//" + attribute)}{additionalAttributes}//public {actualType.Name()}{(hasNulls ? "?" : "")} {CamalCaseName}{(hasNulls ? "?" : "")} {{ get; set; }}" :
+                              $"{attribute}{additionalAttributes}public {actualType.Name()}{(hasNulls ? "?" : "")} {CamalCaseName} {{ get; set; }}";
         }
 
         public static bool AllBoolValues(string[] values) => values.AsParallel().All(val => bool.TryParse(val, out bool b) || Bool_Values.Contains(val.ToLower()));
