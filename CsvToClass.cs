@@ -2,6 +2,7 @@
 using System.Linq;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Globalization;
 
 namespace Csv2CSharpCli
 {
@@ -30,7 +31,10 @@ namespace Csv2CSharpCli
 
             className = Path.GetFileNameWithoutExtension(filePath).Replace('-', '_');
 
-            string code = $"using System;\nusing CsvHelper.Configuration.Attributes;\nusing System.ComponentModel.DataAnnotations.Schema;\n\nnamespace Csv2CSharp \n{{\n{classAttribute}\tpublic class {className} \n\t{{ \n";
+            //Get the cultureInfo in order to handle casing
+            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+
+            string code = $"using System;\nusing CsvHelper.Configuration.Attributes;\nusing System.ComponentModel.DataAnnotations.Schema;\n\nnamespace Csv2CSharp \n{{\n{classAttribute}\tpublic class {textInfo.ToTitleCase(className).Replace(" ", "")} \n\t{{ \n";
             string colNameNoParens, columnName;
 
 
@@ -45,10 +49,10 @@ namespace Csv2CSharpCli
 
                 if (isEmpty)
                 {
-                    code += $"\n\t\t//[Name({columnNames[columnIndex]})]\n\t\t//[Column({Regex.Replace(colNameNoParens, "[\\s]", "_")})]";
+                    code += $"\n\t\t//[Name(\"{columnNames[columnIndex]}\")]\n\t\t//[Column(\"{Regex.Replace(colNameNoParens, "[\\s]", "_")}\")]";
                 } else
                 {
-                code += $"\n\t\t[Name({columnNames[columnIndex]})]\n\t\t[Column({Regex.Replace(colNameNoParens, "[\\s]", "_")})]";
+                code += $"\n\t\t[Name(\"{columnNames[columnIndex]}\")]\n\t\t[Column(\"{Regex.Replace(colNameNoParens, "[\\s]", "_")}\")]";
                 }
                 code += $"\n\t\t{declaration}\n";
             }
