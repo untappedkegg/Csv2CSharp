@@ -99,6 +99,8 @@ namespace Csv2CSharpCli
             }
             else
             {
+                int maxLength = columnValues.AsParallel().Max(a => a.Length);
+                attribute += $"[StringLength({maxLength})]\n\t\t";
                 actualType = SupportedType.STRING;
             }
 
